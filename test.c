@@ -337,14 +337,15 @@ struct user
     char username[30];
     char email[30];
     char password[30];
-    char tasks[500];
+    char tasks[10][100];
+    int task_count;
 };
 
 int main()
 {
-    char cmd[10], username_[30], email_[30], password_[30], task_[500];
+    char cmd[10], username_[30], email_[30], password_[30], task_[100];
     int counter = 0;
-    
+
     struct user users[100];
     while (1)
     {
@@ -353,7 +354,7 @@ int main()
 
         if (strcmp(cmd, "signup") == 0)
         {
-            
+
             printf("Create your username : ");
             scanf("%s", username_);
 
@@ -401,9 +402,6 @@ int main()
         }
         else if (strcmp(cmd, "login") == 0)
         {
-            printf("Enter your username : ");
-            scanf("%s", username_);
-
             printf("Enter you email : ");
             scanf("%s", email_);
 
@@ -412,23 +410,34 @@ int main()
 
             for (int i = 0; i < counter; i++)
             {
-                if (strcmp(users[i].username, username_) == 0 && strcmp(users[i].email, email_) == 0)
+                if (strcmp(users[i].password, password_) == 0 && strcmp(users[i].email, email_) == 0)
                 {
                     printf("Login Successfull!\n");
                     printf("Do you wanna add tasks \"yes/no\": ");
                     scanf("%s", cmd);
 
-                    for (int i = 0; i <1; i++)
+                    char ch;
+                    while ((ch = getchar()) != '\n')
+                        ;
+
+                    for (int i = 0; i < 1; i++)
                     {
                         if (strcmp(cmd, "yes") == 0)
                         {
+                            if (users[i].task_count < 10)
+                            {
 
-                            printf("Enter your task : ");
-                            scanf("%s", task_);
-                            strcat(users[i].tasks, "\n");
-                            strcat(users[i].tasks,task_);
-                            strcat(users[i].tasks, ",\n");
-                            printf("Task added!\n");
+                                printf("Enter your task : ");
+                                fgets(task_, sizeof(task_), stdin);
+                                task_[strcspn(task_, "\n")] = '\0';
+                                strcpy(users[i].tasks[users[i].task_count], task_);
+                                users[i].task_count++;
+                                printf("Task added!\n");
+                            }
+                            else
+                            {
+                                printf("Task list is full");
+                            }
                         }
                     }
                     printf("To check complete list of user's data enter \"data\" : ");
@@ -442,25 +451,37 @@ int main()
                             printf("Username: %s\n", users[i].username);
                             printf("Email: %s\n", users[i].email);
                             printf("Password: %s\n", users[i].password);
-                            printf("Tasks: %s\n", users[i].tasks);
+
+                            if (users[i].task_count == 0)
+                            {
+                                printf("  No tasks added yet.\n");
+                            }
+                            else
+                            {
+                                printf("Tasks : \n");
+                                for (int t = 0; t < users[i].task_count; t++)
+                                {
+                                    printf("  %d. %s\n", t + 1, users[i].tasks[t]);
+                                }
+                            }
                             printf("-----------------------------------------\n");
                         }
                     }
 
                     else
                     {
-                        printf("Invalid Command!\n");
+                        printf("Invalid CommandA!\n");
                     }
                 }
                 else
                 {
-                    printf("Invalid Credentials!\n");
+                    printf("Invalid CommandB!\n");
                 }
             }
         }
         else
         {
-            printf("Invalid Command!\n");
+            printf("Invalid CommandC!\n");
         }
     }
     return 0;
